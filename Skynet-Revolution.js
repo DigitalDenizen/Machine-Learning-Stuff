@@ -123,27 +123,38 @@ function isLinkToGateway(link) { // Looks in gateLinksList to see if matches con
 
 function findAtRiskNode(SI){ //Uses priorities and nodeLinks array;
     var priorityNotFound = true;
-    var highestPriority;
+    var highestPriority = {
+    
+    }
     var nextNode ={ 
-        n2: SI //SI is set to value of nextNode.n2
-    }  
+        n1: undefined,
+        n2: SI, //SI is set to value of nextNode.n2
+        linksAwayFromSi: undefined
+    } 
     var linksAway = 0;
     while(priorityNotFound){
         for(var i = 0; i < nodeLinks.length; i++) {
             linksAway++;
-            var newLink = nodeLinks;
-            if(nextNode.n2 === newLink.n1) {
-                if(isLinkGate(newLink) && !hasLinkedBeenChecked(newLink) && isSecure(newLink)){
-                    var isGateBranch = isGateBranch(newLink);
-                    if((nextNode.linksAwayFromSi < highestPriority.linksAwayFromSi || highestPriority.linksAwayFromSi === undefined) && isGateBranch){
-                        highestPriority.n1 = newLink.n1;
-                        highestPriority.n2 = newLink.n2;
-                        highestPriority.linksAwayFromSi = linksAway;
+            var newLink = nodeLinks[i];
+            
+            if(nextNode.n2 === newLink.n1) {    
+                if(isLinkToGateway(newLink) && !hasLinkedBeenChecked(newLink) && isSecure(newLink)){
+                    var isBranch = isGateBranch(newLink);
+                    if((nextNode.linksAwayFromSi < highestPriority.linksAwayFromSi || highestPriority.linksAwayFromSi === undefined) && isBranch){
+                        highestPriority = {
+                            n1: newLink.n1,
+                            n2: newLink.n2,
+                            linksAwayFromSi: linksAway
+                        }
                         priorityNotFound = false;
                         priorities.push(newLink);
-                    } else if (!isGateBranch){
+                    } else if (!isBranch){
                         linksAway--;
                         priorities.push(newLink);
+                    } else {
+                        nextNode.n1 = newLink.n1;
+                        nextNode.n2 = newLink.n2;
+                        nextNode.linksAwayFromSi = linksAway;
                     }
                 }
             }
@@ -154,7 +165,17 @@ function findAtRiskNode(SI){ //Uses priorities and nodeLinks array;
 }
 
 function isGateBranch(link) {
+    var isGateReallllyABranch = false;
+    for(var i = 0; i < gateLinksList.length; i++) {
+        gate = gateLinksList.Gate;
+        node = gateLinksList.node;
 
+        if ((link.n1 !== gate && link.n2 !== gate) && (link.n1 === node || link.n2 === node)){
+            isGateReallllyABranch = true;
+        }
+    }
+    printErr('IsGateBranch Works!');
+    return isGateReallllyABranch;
 }
 
 function hasLinkBeenChecked(link) {
@@ -167,5 +188,6 @@ function hasLinkBeenChecked(link) {
             linkHasBeenChecked = true;
         }
     }
+    printErr('hasLinkBeenChecked Works!');
     return linkHasBeenChecked;
 }
