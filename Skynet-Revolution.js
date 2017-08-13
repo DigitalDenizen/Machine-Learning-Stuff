@@ -1,8 +1,3 @@
-/**
- * Auto-generated code below aims at helping you parse
- * the standard input according to the problem statement.
- **/
-
 var inputs = readline().split(' ');
 var N = parseInt(inputs[0]); // the total number of nodes in the level, including the gateways
 var L = parseInt(inputs[1]); // the number of links
